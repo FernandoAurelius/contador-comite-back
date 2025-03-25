@@ -39,7 +39,7 @@ public class Venda {
 
     private String notes;
 
-    private Boolean isHazing;
+    private Boolean isTrote;
 
     @ManyToOne
     private User user;

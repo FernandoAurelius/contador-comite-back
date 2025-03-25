@@ -2,6 +2,7 @@ package br.com.floresdev.contador_comite_back.services;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class DespesaService {
         return repository.findAll();
     }
 
-    public List<Despesa> getDespesasByDate(LocalDate date) {
+    public Optional<List<Despesa>> getDespesasByDate(LocalDate date) {
         return repository.findByDate(date);
     }
 

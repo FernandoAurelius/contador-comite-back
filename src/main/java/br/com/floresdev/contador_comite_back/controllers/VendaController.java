@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.floresdev.contador_comite_back.domain.venda.Venda;
-import br.com.floresdev.contador_comite_back.domain.venda.VendaDTO;
+import br.com.floresdev.contador_comite_back.domain.venda.dto.VendaDTO;
 import br.com.floresdev.contador_comite_back.services.VendaService;
 
 @RestController
@@ -56,7 +56,7 @@ public class VendaController {
         return ResponseEntity.ok(vendas);
     }
 
-    @GetMapping("/data/{date}")
+    @GetMapping("/{date}")
     public ResponseEntity<List<VendaDTO>> getVendasByDate(
         @PathVariable @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date
     ) {

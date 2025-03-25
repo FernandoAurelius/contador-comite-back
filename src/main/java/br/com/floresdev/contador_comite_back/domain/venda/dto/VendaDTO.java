@@ -1,8 +1,10 @@
-package br.com.floresdev.contador_comite_back.domain.venda;
+package br.com.floresdev.contador_comite_back.domain.venda.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import br.com.floresdev.contador_comite_back.domain.venda.ItemType;
+import br.com.floresdev.contador_comite_back.domain.venda.Venda;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,7 +33,7 @@ public class VendaDTO {
         venda.setUnitPrice(this.unitPrice);
         venda.setTotalPrice(this.totalPrice);
         venda.setNotes(this.notes);
-        venda.setIsHazing(this.isHazing);
+        venda.setIsTrote(this.isHazing);
         
         return venda;
     }
@@ -46,7 +48,7 @@ public class VendaDTO {
         dto.setUnitPrice(venda.getUnitPrice());
         dto.setTotalPrice(venda.getTotalPrice());
         dto.setNotes(venda.getNotes());
-        dto.setIsHazing(venda.getIsHazing());
+        dto.setIsHazing(venda.getIsTrote());
 
         return dto;
     }
