@@ -15,7 +15,7 @@ public class AuthorizationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) {
-        return repository.findByEmail(email);
+        return repository.findByEmail(email).orElseThrow();
     }
 
 }

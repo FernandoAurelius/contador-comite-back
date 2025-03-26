@@ -13,4 +13,11 @@ public enum UserRole {
     UserRole(String role) {
         this.role = role;
     }
+
+    public static UserRole fromString(String role) {
+        for (UserRole userRole : values()) {
+            if (userRole.getRole().equals(role)) return userRole;
+        }
+        throw new IllegalArgumentException("Invalid role: " + role);
+    }
 }

@@ -2,6 +2,7 @@ package br.com.floresdev.contador_comite_back.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import br.com.floresdev.contador_comite_back.services.CapitalService;
 
 @RestController
 @RequestMapping("/api/capital")
+@CrossOrigin(origins = "*")
 public class CapitalController {
 
     @Autowired
@@ -26,7 +28,7 @@ public class CapitalController {
         );
     }
 
-    @PutMapping
+    @PutMapping("/initial")
     public ResponseEntity<CapitalDTO> updateCapitalInicial(CapitalDTO dto) {
         return ResponseEntity.ok(
             CapitalDTO.fromEntity(
@@ -35,7 +37,7 @@ public class CapitalController {
         );
     }
 
-    @PutMapping
+    @PutMapping("/current")
     public ResponseEntity<CapitalDTO> updateCurrentCapital(CapitalDTO dto) {
         return ResponseEntity.ok(
             CapitalDTO.fromEntity(
