@@ -13,7 +13,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import br.com.floresdev.contador_comite_back.domain.repositories.UserRepository;
-import br.com.floresdev.contador_comite_back.infra.TokenService;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -28,13 +27,15 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
         try {
             var token = this.recoverToken(request);
-            if (token == null) filterChain.doFilter(request, response); // Se o token é nulo, nós só repassamos o filtro para a próxima etapa (que é a autenticação)
-    
-            var email = service.validateToken(token);
-            repository.findByEmail(email).ifPresent(user -> {
-                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            });
+            if (token != null) {
+                var email = service.validateToken(token);
+                repository.findByEmail(email).ifPresent(user -> {
+                    var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }); 
+            }
+
+            filterChain.doFilter(request, response); // Se o token é nulo, nós só repassamos o filtro para a próxima etapa (que é a autenticação)
         } catch (IOException e) {
             System.out.println("Erro de IO ao tentar validar o token: " + e.getMessage());
         } catch (ServletException e) {

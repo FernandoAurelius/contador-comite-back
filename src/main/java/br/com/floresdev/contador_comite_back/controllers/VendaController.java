@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.floresdev.contador_comite_back.domain.venda.Venda;
 import br.com.floresdev.contador_comite_back.domain.venda.dto.VendaDTO;
 import br.com.floresdev.contador_comite_back.services.VendaService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/vendas")
@@ -31,7 +32,7 @@ public class VendaController {
     private VendaService service;
 
     @PostMapping
-    public ResponseEntity<VendaDTO> createVenda(@RequestBody VendaDTO vendaDTO) {
+    public ResponseEntity<VendaDTO> createVenda(@RequestBody @Valid VendaDTO vendaDTO) {
         if (vendaDTO.getTotalPrice() == null && vendaDTO.getUnitPrice() != null && vendaDTO.getQuantity() != null) {
             vendaDTO.setTotalPrice(
                     vendaDTO.getUnitPrice()

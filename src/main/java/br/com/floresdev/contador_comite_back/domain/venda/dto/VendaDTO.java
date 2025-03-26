@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class VendaDTO {
 
     private Long id;
-    private LocalDate date;
+    private String date;
     private ItemType itemType;
     private Integer quantity;
     private BigDecimal unitPrice;
@@ -27,7 +27,7 @@ public class VendaDTO {
         Venda venda = new Venda();
 
         venda.setId(this.id);
-        venda.setDate(this.date);
+        venda.setDate(LocalDate.of());
         venda.setItemType(this.itemType);
         venda.setQuantity(this.quantity);
         venda.setUnitPrice(this.unitPrice);
