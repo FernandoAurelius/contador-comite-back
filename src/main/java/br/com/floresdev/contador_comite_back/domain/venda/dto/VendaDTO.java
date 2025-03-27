@@ -22,7 +22,6 @@ public class VendaDTO {
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
     private String notes;
-    private Boolean isHazing;
 
     private static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -38,7 +37,6 @@ public class VendaDTO {
         venda.setUnitPrice(this.unitPrice);
         venda.setTotalPrice(this.totalPrice);
         venda.setNotes(this.notes);
-        venda.setIsTrote(this.isHazing);
         
         return venda;
     }
@@ -53,7 +51,6 @@ public class VendaDTO {
         dto.setUnitPrice(venda.getUnitPrice());
         dto.setTotalPrice(venda.getTotalPrice());
         dto.setNotes(venda.getNotes());
-        dto.setIsHazing(venda.getIsTrote());
 
         return dto;
     }

@@ -79,7 +79,6 @@ classDiagram
         -BigDecimal unitPrice
         -BigDecimal totalPrice
         -String notes
-        -Boolean isTrote
     }
     
     class Despesa {

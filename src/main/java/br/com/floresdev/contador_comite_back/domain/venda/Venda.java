@@ -39,8 +39,6 @@ public class Venda {
 
     private String notes;
 
-    private Boolean isTrote;
-
     @ManyToOne
     private User user;
 }
