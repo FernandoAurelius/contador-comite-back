@@ -1,6 +1,8 @@
 package br.com.floresdev.contador_comite_back.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +33,8 @@ public class MetaService {
             "Meta para formatura",
             new BigDecimal("14520.00"), // Valor meta para ~100 alunos
             BigDecimal.ZERO,
-            null,
-            null,
+            LocalDate.now(),
+            LocalDate.from(DateTimeFormatter.ofPattern("dd/MM/yyyy").parse("29/08/2025")),
             MetaStatus.ATIVA
         );
     }
@@ -42,14 +44,27 @@ public class MetaService {
         return repository.save(meta);
     }
 
-    public Meta updateMetaValue(BigDecimal currentValue) {
+    public Meta addValue(BigDecimal value) {
         Meta meta = getOrCreateMeta();
-        meta.setCurrentValue(currentValue);
+        meta.setCurrentValue(meta.getCurrentValue().add(value));
 
-        if (currentValue.compareTo(meta.getGoalValue()) >= 0) {
+        if (meta.getCurrentValue().compareTo(meta.getGoalValue()) >= 0) {
             meta.setStatus(MetaStatus.CONCLUIDA);
         }
         
+        return updateMeta(meta);
+    }
+
+    public Meta subtractValue(BigDecimal value) {
+        Meta meta = getOrCreateMeta();
+        meta.setCurrentValue(meta.getCurrentValue().subtract(value));
+
+        // Essa expressão é curiosa pois compareTo() retorna três valores possíveis: -1, 0 ou 1, sendo -1 menor que, 0 igual a e 1 maior que
+        // Então, se o valor atual for menor que o valor da meta (se o retorno for -1, ou seja, menor que 0), a meta ainda está ativa
+        if (meta.getCurrentValue().compareTo(meta.getGoalValue()) < 0) {
+            meta.setStatus(MetaStatus.ATIVA);
+        }
+
         return updateMeta(meta);
     }
 }

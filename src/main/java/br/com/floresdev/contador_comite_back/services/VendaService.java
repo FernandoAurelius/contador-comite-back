@@ -15,8 +15,15 @@ public class VendaService {
     @Autowired
     private VendaRepository repository;
 
+    @Autowired
+    private CapitalService capitalService;
+
     public Venda createOrUpdateVenda(Venda venda) {
-        return repository.save(venda);
+        venda = repository.save(venda);
+        
+        capitalService.addValue(venda.getTotalPrice());
+        
+        return venda;
     }
 
     public List<Venda> getVendas() {
@@ -28,10 +35,15 @@ public class VendaService {
     }
 
     public void deleteVenda(Long id) {
-        if (!repository.existsById(id)) {
+        Venda venda = repository.findById(id).orElse(null);
+
+        if (venda == null) {
             System.out.printf("Venda com id '%d' não encontrada", id);
             return;
         }
+
+        capitalService.subtractValue(venda.getTotalPrice());
+        
         repository.deleteById(id);
     }
 }

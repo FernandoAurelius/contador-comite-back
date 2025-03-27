@@ -16,8 +16,15 @@ public class DespesaService {
     @Autowired
     private DespesaRepository repository;
 
+    @Autowired
+    private CapitalService capitalService;
+
     public Despesa createOrUpdateDespesa(Despesa despesa) {
-        return repository.save(despesa);
+        despesa = repository.save(despesa);
+
+        capitalService.subtractValue(despesa.getTotalCost());
+
+        return despesa;
     }
 
     public List<Despesa> getDespesas() {
@@ -29,10 +36,14 @@ public class DespesaService {
     }
 
     public void deleteDespesa(Long id) {
-        if (!repository.existsById(id)) {
-            System.out.printf("Despesa com id '%d' não encontrada", id);
-            return;
+        Despesa despesa = repository.findById(id).orElse(null);
+
+        if (despesa == null) {
+            System.out.printf("Despesa com id %d não encontrada.", id);
         }
+
+        capitalService.addValue(despesa.getTotalCost());
+
         repository.deleteById(id);
     }
 

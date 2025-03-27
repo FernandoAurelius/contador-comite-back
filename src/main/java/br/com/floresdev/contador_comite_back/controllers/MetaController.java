@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/meta")
@@ -25,13 +23,6 @@ public class MetaController {
     public ResponseEntity<MetaDTO> getMeta() {
         return ResponseEntity.ok(
             MetaDTO.fromEntity(service.getOrCreateMeta())
-        );
-    }
-
-    @PutMapping
-    public ResponseEntity<MetaDTO> updateMeta(@RequestBody MetaDTO dto) {
-        return ResponseEntity.ok(
-            MetaDTO.fromEntity(service.updateMetaValue(dto.toEntity().getCurrentValue()))
         );
     }
 }

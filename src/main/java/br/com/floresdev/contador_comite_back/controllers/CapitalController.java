@@ -1,5 +1,7 @@
 package br.com.floresdev.contador_comite_back.controllers;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.floresdev.contador_comite_back.domain.capital.dto.CapitalDTO;
 import br.com.floresdev.contador_comite_back.services.CapitalService;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/capital")
@@ -37,11 +41,20 @@ public class CapitalController {
         );
     }
 
-    @PutMapping("/current")
-    public ResponseEntity<CapitalDTO> updateCurrentCapital(CapitalDTO dto) {
+    @PutMapping("/current/add")
+    public ResponseEntity<CapitalDTO> addCapital(@RequestBody BigDecimal amount) {
         return ResponseEntity.ok(
             CapitalDTO.fromEntity(
-                service.updateCurrentCapital(dto.getCurrentAmount())
+                service.addValue(amount)
+            )
+        );
+    }
+
+    @PutMapping("/current/subtract")
+    public ResponseEntity<CapitalDTO> subtractCapital(@RequestBody BigDecimal amount) {
+        return ResponseEntity.ok(
+            CapitalDTO.fromEntity(
+                service.subtractValue(amount)
             )
         );
     }

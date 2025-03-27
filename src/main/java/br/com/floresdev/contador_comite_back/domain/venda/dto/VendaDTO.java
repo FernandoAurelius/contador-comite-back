@@ -2,6 +2,7 @@ package br.com.floresdev.contador_comite_back.domain.venda.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import br.com.floresdev.contador_comite_back.domain.venda.ItemType;
 import br.com.floresdev.contador_comite_back.domain.venda.Venda;
@@ -23,11 +24,15 @@ public class VendaDTO {
     private String notes;
     private Boolean isHazing;
 
+    private static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     public Venda toEntity() {
         Venda venda = new Venda();
 
         venda.setId(this.id);
-        venda.setDate(LocalDate.of());
+        venda.setDate(
+            LocalDate.from(fmt.parse(this.date))
+        );
         venda.setItemType(this.itemType);
         venda.setQuantity(this.quantity);
         venda.setUnitPrice(this.unitPrice);
@@ -42,7 +47,7 @@ public class VendaDTO {
         VendaDTO dto = new VendaDTO();
 
         dto.setId(venda.getId());
-        dto.setDate(venda.getDate());
+        dto.setDate(venda.getDate().format(fmt));
         dto.setItemType(venda.getItemType());
         dto.setQuantity(venda.getQuantity());
         dto.setUnitPrice(venda.getUnitPrice());

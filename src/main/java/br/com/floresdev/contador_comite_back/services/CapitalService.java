@@ -15,6 +15,9 @@ public class CapitalService {
     @Autowired
     private CapitalRepository repository;
 
+    @Autowired
+    private MetaService metaService;
+
     public Capital getOrCreateCapital() {
         Optional<Capital> capital = repository.findById(1L);
         if (capital.isPresent()) {
@@ -26,13 +29,30 @@ public class CapitalService {
 
     public Capital updateInitialCapital(BigDecimal amount) {
         Capital capital = getOrCreateCapital();
+
         capital.setInitialAmount(amount);
+        capital = repository.save(capital);
+
+        metaService.addValue(amount);
+
+        return capital;
+    }
+
+    public Capital addValue(BigDecimal amount) {
+        Capital capital = getOrCreateCapital();
+
+        metaService.addValue(amount);
+        capital.setCurrentAmount(capital.getCurrentAmount().add(amount));
+
         return repository.save(capital);
     }
 
-    public Capital updateCurrentCapital(BigDecimal amount) {
+    public Capital subtractValue(BigDecimal amount) {
         Capital capital = getOrCreateCapital();
-        capital.setCurrentAmount(amount);
+
+        metaService.subtractValue(amount);
+        capital.setCurrentAmount(capital.getCurrentAmount().subtract(amount));
+
         return repository.save(capital);
     }
 }
