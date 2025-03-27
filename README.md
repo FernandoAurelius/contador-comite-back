@@ -289,73 +289,78 @@ classDiagram
 
 ### Diagrama da Arquitetura do Sistema
 ```mermaid
-classDiagram
-    %% Camadas da Arquitetura
-    package "Apresentacao" {
-        class CapitalController
-        class MetaController
-        class VendaController
-        class DespesaController
-        class AuthenticationController
-    }
-    
-    package "Aplicacao" {
-        class CapitalService
-        class MetaService
-        class VendaService
-        class DespesaService
-        class TokenService
-    }
-    
-    package "Dominio" {
-        class Capital
-        class Meta
-        class Venda
-        class Despesa
-        class User
-        class ItemType
-        class MetaStatus
-        class UserRole
-    }
-    
-    package "Infraestrutura" {
-        class CapitalRepository
-        class MetaRepository
-        class VendaRepository
-        class DespesaRepository
-        class UserRepository
-    }
-    
-    package "DTOs" {
-        class CapitalDTO
-        class MetaDTO
-        class VendaDTO
-        class DespesaDTO
-        class AuthenticationDTO
-        class LoginResponseDTO
-        class RegisterDTO
-    }
-    
+flowchart TB
+    %% Cada 'subgraph' representa uma camada.
+
+    subgraph Apresentacao
+        CapitalController
+        MetaController
+        VendaController
+        DespesaController
+        AuthenticationController
+    end
+
+    subgraph Aplicacao
+        CapitalService
+        MetaService
+        VendaService
+        DespesaService
+        TokenService
+    end
+
+    subgraph Dominio
+        Capital
+        Meta
+        Venda
+        Despesa
+        User
+        ItemType
+        MetaStatus
+        UserRole
+    end
+
+    subgraph Infraestrutura
+        CapitalRepository
+        MetaRepository
+        VendaRepository
+        DespesaRepository
+        UserRepository
+    end
+
+    subgraph DTOs
+        CapitalDTO
+        MetaDTO
+        VendaDTO
+        DespesaDTO
+        AuthenticationDTO
+        LoginResponseDTO
+        RegisterDTO
+    end
+
     %% Relações entre camadas
-    CapitalController --> CapitalService : usa
-    MetaController --> MetaService : usa
-    VendaController --> VendaService : usa
-    DespesaController --> DespesaService : usa
-    
-    CapitalService --> Capital : manipula
-    MetaService --> Meta : manipula
-    VendaService --> Venda : manipula
-    DespesaService --> Despesa : manipula
-    
-    CapitalService --> CapitalRepository : usa
-    MetaService --> MetaRepository : usa
-    VendaService --> VendaRepository : usa
-    DespesaService --> DespesaRepository : usa
-    
-    Capital ..> CapitalDTO : converte para
-    Meta ..> MetaDTO : converte para
-    Venda ..> VendaDTO : converte para
-    Despesa ..> DespesaDTO : converte para
+    CapitalController --> CapitalService
+    MetaController --> MetaService
+    VendaController --> VendaService
+    DespesaController --> DespesaService
+    AuthenticationController --> TokenService
+
+    CapitalService --> CapitalRepository
+    MetaService --> MetaRepository
+    VendaService --> VendaRepository
+    DespesaService --> DespesaRepository
+    TokenService --> UserRepository
+
+    CapitalService --> Capital
+    MetaService --> Meta
+    VendaService --> Venda
+    DespesaService --> Despesa
+    TokenService --> User
+
+    Capital --> CapitalDTO
+    Meta --> MetaDTO
+    Venda --> VendaDTO
+    Despesa --> DespesaDTO
+    User --> AuthenticationDTO
 ```
 
 ### Fluxo de Dados do Sistema
