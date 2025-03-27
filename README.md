@@ -291,7 +291,7 @@ classDiagram
 ```mermaid
 classDiagram
     %% Camadas da Arquitetura
-    namespace Apresentação {
+    package "Apresentacao" {
         class CapitalController
         class MetaController
         class VendaController
@@ -299,7 +299,7 @@ classDiagram
         class AuthenticationController
     }
     
-    namespace Aplicação {
+    package "Aplicacao" {
         class CapitalService
         class MetaService
         class VendaService
@@ -307,7 +307,7 @@ classDiagram
         class TokenService
     }
     
-    namespace Domínio {
+    package "Dominio" {
         class Capital
         class Meta
         class Venda
@@ -318,7 +318,7 @@ classDiagram
         class UserRole
     }
     
-    namespace Infraestrutura {
+    package "Infraestrutura" {
         class CapitalRepository
         class MetaRepository
         class VendaRepository
@@ -326,7 +326,7 @@ classDiagram
         class UserRepository
     }
     
-    namespace DTOs {
+    package "DTOs" {
         class CapitalDTO
         class MetaDTO
         class VendaDTO
@@ -337,10 +337,25 @@ classDiagram
     }
     
     %% Relações entre camadas
-    Apresentação --> Aplicação : usa
-    Aplicação --> Domínio : manipula
-    Aplicação --> Infraestrutura : usa
-    Domínio ..> DTOs : converte para
+    CapitalController --> CapitalService : usa
+    MetaController --> MetaService : usa
+    VendaController --> VendaService : usa
+    DespesaController --> DespesaService : usa
+    
+    CapitalService --> Capital : manipula
+    MetaService --> Meta : manipula
+    VendaService --> Venda : manipula
+    DespesaService --> Despesa : manipula
+    
+    CapitalService --> CapitalRepository : usa
+    MetaService --> MetaRepository : usa
+    VendaService --> VendaRepository : usa
+    DespesaService --> DespesaRepository : usa
+    
+    Capital ..> CapitalDTO : converte para
+    Meta ..> MetaDTO : converte para
+    Venda ..> VendaDTO : converte para
+    Despesa ..> DespesaDTO : converte para
 ```
 
 ### Fluxo de Dados do Sistema
