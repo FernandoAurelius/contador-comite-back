@@ -33,16 +33,6 @@ public class VendaController {
 
     @PostMapping
     public ResponseEntity<VendaDTO> createVenda(@RequestBody @Valid VendaDTO vendaDTO) {
-        if (vendaDTO.getTotalPrice() == null && vendaDTO.getUnitPrice() != null && vendaDTO.getQuantity() != null) {
-            vendaDTO.setTotalPrice(
-                    vendaDTO.getUnitPrice()
-                            .multiply(
-                                    BigDecimal.valueOf((vendaDTO.getQuantity())
-                                    )
-                            )
-            );
-        }
-
         Venda venda = service.createOrUpdateVenda(vendaDTO.toEntity());
         return ResponseEntity.ok(VendaDTO.fromEntity(venda));
     }

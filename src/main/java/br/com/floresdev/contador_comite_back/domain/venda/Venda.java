@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import br.com.floresdev.contador_comite_back.domain.user.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -11,6 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +35,9 @@ public class Venda {
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
 
+    @Column(nullable = false)
+    private BigDecimal purchasePrice;
+
     private Integer quantity;
 
     private BigDecimal unitPrice;
@@ -41,4 +47,13 @@ public class Venda {
 
     @ManyToOne
     private User user;
+
+    // Como o valor de purchasePrice é baseado no valor de cada itemType definido no Enum, temos que calcular e setar ele dinamicamente
+    @PrePersist
+    @PreUpdate
+    private void updatePurchasePrice() {
+        if (this.itemType != null) {
+            this.purchasePrice = this.getItemType().getPrice();
+        }
+    }
 }
