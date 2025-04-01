@@ -16,7 +16,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: contador_comite_test
+          POSTGRES_DB: receita
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
@@ -42,7 +42,7 @@ jobs:
         run: mvn test
         env:
           # Usando o nome do serviço como hostname
-          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/contador_comite_test
+          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/receita
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: postgres
         
