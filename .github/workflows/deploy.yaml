@@ -70,7 +70,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
-            docker stop contador-app || true
-            docker rm contador-app || true
-            docker run -d --name contador-app -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
+            sudo docker stop contador-app || true
+            sudo docker rm contador-app || true
+            sudo docker run -d --name contador-app -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
