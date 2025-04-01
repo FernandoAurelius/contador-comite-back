@@ -1,5 +1,7 @@
 package br.com.floresdev.contador_comite_back.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,6 +34,8 @@ import jakarta.validation.Valid;
 @CrossOrigin(origins = "*")
 @Tag(name = "Autenticação", description = "API para autenticação e registro de usuários")
 public class AuthenticationController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @Autowired
     private UserRepository repository;
@@ -49,13 +54,26 @@ public class AuthenticationController {
         @ApiResponse(responseCode = "403", description = "Credenciais inválidas", 
                     content = @Content)
     })
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO dto) {
-        var userPassword = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
-        var auth = authManager.authenticate(userPassword);
-
-        var token = service.generateToken((User) auth.getPrincipal());
-
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO dto, HttpServletRequest request) {
+        String ipAddress = request.getRemoteAddr();
+        logger.info("Tentativa de login para o email: {} de IP: {}", dto.email(), ipAddress);
+        
+        try {
+            var userPassword = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
+            var auth = authManager.authenticate(userPassword);
+            
+            var user = (User) auth.getPrincipal();
+            var token = service.generateToken(user);
+            
+            logger.info("Login bem-sucedido para o usuário: {}, ID: {}, IP: {}", 
+                    user.getUsername(), user.getId(), ipAddress);
+            
+            return ResponseEntity.ok(new LoginResponseDTO(token));
+        } catch (Exception e) {
+            logger.warn("Falha na autenticação para o email: {} de IP: {} - Motivo: {}", 
+                    dto.email(), ipAddress, e.getMessage());
+            throw e;
+        }
     }
 
     @PostMapping("/register")
@@ -66,15 +84,34 @@ public class AuthenticationController {
         @ApiResponse(responseCode = "400", description = "E-mail já em uso ou papel de usuário inválido", 
                     content = @Content)
     })
-    public ResponseEntity<Void> register(@RequestBody @Valid RegisterDTO dto) {
-        if (repository.findByEmail(dto.email()).isPresent()) return ResponseEntity.badRequest().build();
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterDTO dto, HttpServletRequest request) {
+        String ipAddress = request.getRemoteAddr();
+        logger.info("Tentativa de registro para o email: {} com papel: {} de IP: {}", 
+                dto.email(), dto.role(), ipAddress);
+        
+        if (repository.findByEmail(dto.email()).isPresent()) {
+            logger.warn("Tentativa de registro falhou: email já em uso: {} de IP: {}", dto.email(), ipAddress);
+            return ResponseEntity.badRequest().build();
+        }
 
         try {
             String encryptedPassword = new BCryptPasswordEncoder().encode(dto.password());
-            repository.save(new User(dto.name(), dto.email(), encryptedPassword, UserRole.fromString(dto.role())));
+            UserRole userRole = UserRole.fromString(dto.role());
+            User newUser = new User(dto.name(), dto.email(), encryptedPassword, userRole);
+            repository.save(newUser);
+            
+            logger.info("Usuário registrado com sucesso: {}, papel: {}, IP: {}", 
+                    dto.email(), userRole, ipAddress);
+            
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
+            logger.error("Erro ao registrar usuário com email: {} - Papel inválido: {} de IP: {} - Mensagem: {}", 
+                    dto.email(), dto.role(), ipAddress, e.getMessage());
             return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            logger.error("Erro inesperado ao registrar usuário com email: {} de IP: {} - Mensagem: {}", 
+                    dto.email(), ipAddress, e.getMessage(), e);
+            throw e;
         }
     }
 }
