@@ -42,10 +42,7 @@ jobs:
         run: mvn test
         env:
           # Usando o nome do serviço como hostname
-          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/receita
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: postgres
-          API_SECURITY_TOKEN_SECRET: 1
+          SPRING_PROFILES_ACTIVE: test
         
       - name: Build Docker image
         run: docker build -t contador-receita-back .
