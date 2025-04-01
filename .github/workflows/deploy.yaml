@@ -9,6 +9,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: contador_comite_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
     steps:
       - uses: actions/checkout@v3
       
@@ -23,6 +39,10 @@ jobs:
         
       - name: Run tests
         run: mvn test
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/contador_comite_test
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
         
       - name: Build Docker image
         run: docker build -t contador-receita-back .
@@ -54,4 +74,3 @@ jobs:
             docker stop contador-app || true
             docker rm contador-app || true
             docker run -d --name contador-app -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
-            
