@@ -11,15 +11,25 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/meta")
 @CrossOrigin(origins = "*")
+@Tag(name = "Meta", description = "API para gerenciamento de metas financeiras")
 public class MetaController {
 
     @Autowired
     private MetaService service;
 
     @GetMapping
+    @Operation(summary = "Obter meta atual", description = "Recupera a meta financeira atual ou cria uma nova caso não exista")
+    @ApiResponse(responseCode = "200", description = "Meta recuperada com sucesso",
+                content = @Content(schema = @Schema(implementation = MetaDTO.class)))
     public ResponseEntity<MetaDTO> getMeta() {
         return ResponseEntity.ok(
             MetaDTO.fromEntity(service.getOrCreateMeta())
