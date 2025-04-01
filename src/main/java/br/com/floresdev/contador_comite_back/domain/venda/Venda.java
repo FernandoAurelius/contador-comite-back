@@ -51,6 +51,7 @@ public class Venda {
     // Como o valor de purchasePrice é baseado no valor de cada itemType definido no Enum, temos que calcular e setar ele dinamicamente
     @PrePersist
     @PreUpdate
+    @SuppressWarnings("unused")
     private void updatePurchasePrice() {
         if (this.itemType != null) {
             this.purchasePrice = this.getItemType().getPrice();

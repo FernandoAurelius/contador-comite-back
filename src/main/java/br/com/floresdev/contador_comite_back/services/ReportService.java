@@ -8,9 +8,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.floresdev.contador_comite_back.domain.despesa.dto.CostSummaryDTO;
 import br.com.floresdev.contador_comite_back.domain.financeiro.ReportPeriod;
+import br.com.floresdev.contador_comite_back.domain.financeiro.ReportDTO;
 import br.com.floresdev.contador_comite_back.domain.repositories.DespesaRepository;
 import br.com.floresdev.contador_comite_back.domain.repositories.VendaRepository;
+import br.com.floresdev.contador_comite_back.domain.venda.dto.ProductSummaryDTO;
+import br.com.floresdev.contador_comite_back.domain.venda.dto.ProductSummaryTroteDTO;
 
 @Service
 public class ReportService {
@@ -31,7 +35,7 @@ public class ReportService {
 
         switch (period) {
             case ReportPeriod.DIARIO -> {
-                return List.of(today);
+                return List.of(today, today);
             }
 
             case ReportPeriod.SEMANAL -> {
@@ -53,11 +57,60 @@ public class ReportService {
         }        
      }
 
-     public BigDecimal getTotalIncome(List<LocalDate> dates) {
+     public ReportDTO getReport(String period, boolean trote) {
+        try {
+            var reportPeriod = ReportPeriod.fromString(period);
+            var dates = getReportDates(reportPeriod);
+
+            ProductSummaryTroteDTO incomeTrote = null;
+            ProductSummaryTroteDTO profitTrote = null;
+
+            if (trote) {
+                incomeTrote = getProductSummaryTrote(dates, false);
+                profitTrote = getProductSummaryTrote(dates, true);
+            }
+
+            return new ReportDTO(
+                getTotalIncome(dates),
+                getTotalProfit(dates),
+                getTotalCosts(dates),
+                getProductSummary(dates, false),
+                getProductSummary(dates, true),
+                incomeTrote,
+                profitTrote,
+                getSpecificCosts(dates)
+            );
+
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }
+     }
+
+     private BigDecimal getTotalIncome(List<LocalDate> dates) {
         return vendaRepository.getTotalIncome(dates.get(0), dates.get(1));
      }
 
-     public BigDecimal getTotalProfit(List<LocalDate> dates) {
+     private BigDecimal getTotalProfit(List<LocalDate> dates) {
         return vendaRepository.getTotalProfit(dates.get(0), dates.get(1));
+     }
+
+     private BigDecimal getTotalCosts(List<LocalDate> dates) {
+         return despesaRepository.getTotalCosts(dates.get(0), dates.get(1));
+     }
+
+     private List<CostSummaryDTO> getSpecificCosts(List<LocalDate> dates) {
+         return despesaRepository.getSpecificCosts(dates.get(0), dates.get(1));
+     }
+
+     private ProductSummaryDTO getProductSummary(List<LocalDate> dates, boolean... profit) {
+        if (profit.length > 0) return vendaRepository.getProductSummary(dates.get(0), dates.get(1), profit[0]);
+
+        return vendaRepository.getProductSummary(dates.get(0), dates.get(1), false);
+     }
+
+     private ProductSummaryTroteDTO getProductSummaryTrote(List<LocalDate> dates, boolean... profit) {
+        if (profit.length > 0) return vendaRepository.getProductSummaryTrote(dates.get(0), dates.get(1), profit[0]);
+
+        return vendaRepository.getProductSummaryTrote(dates.get(0), dates.get(1), false);
      }
 }

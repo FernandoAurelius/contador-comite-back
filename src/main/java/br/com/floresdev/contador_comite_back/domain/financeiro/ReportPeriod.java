@@ -7,14 +7,16 @@ public enum ReportPeriod {
 
     public static ReportPeriod fromString(String period) {
         switch (period.toUpperCase()) {
-            case "DIARIO":
+            case "DIARIO" -> {
                 return DIARIO;
-            case "SEMANAL":
+            }
+            case "SEMANAL" -> {
                 return SEMANAL;
-            case "MENSAL":
+            }
+            case "MENSAL" -> {
                 return MENSAL;
-            default:
-                throw new IllegalArgumentException("Invalid period: " + period);
+            }
+            default -> throw new IllegalArgumentException("Invalid period: " + period);
         }
     }
 }
