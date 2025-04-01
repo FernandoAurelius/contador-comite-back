@@ -1,4 +1,4 @@
-FROM container-registry.oracle.com/java/jdk:21 AS build
+FROM eclipse-temurin:21 AS build
 WORKDIR /workspace/app
 
 COPY mvnw .
@@ -14,7 +14,7 @@ RUN ./mvnw package -DskipTests
 RUN mkdir -p target/extracted && \
     java -Djarmode=layertools -jar target/*.jar extract --destination target/extracted
 
-FROM container-registry.oracle.com/java/jdk:21-slim
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 COPY --from=build /workspace/app/target/extracted/dependencies/ ./
