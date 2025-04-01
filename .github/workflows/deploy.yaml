@@ -70,7 +70,25 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
             sudo docker stop contador-app || true
             sudo docker rm contador-app || true
-            sudo docker run -d --name contador-app -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
+            
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
+            
+            sudo docker run -d --name contador-app \
+              -p 8080:8080 \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              -e SPRING_DATASOURCE_URL=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }} \
+              -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
+              -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              -e API_SECURITY_TOKEN_SECRET="${{ secrets.API_SECURITY_TOKEN }}" \
+              --restart unless-stopped \
+              ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
+            
+            sleep 10
+            sudo docker ps
+            
+            if ! sudo docker ps | grep contador-app; then
+              echo "Container falhou ao iniciar. Verificando logs:"
+              sudo docker logs contador-app
+            fi
