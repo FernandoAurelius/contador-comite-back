@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/capital")
-@CrossOrigin(origins = "*")
 @Tag(name = "Capital", description = "API para gerenciamento do capital financeiro")
 public class CapitalController {
 
