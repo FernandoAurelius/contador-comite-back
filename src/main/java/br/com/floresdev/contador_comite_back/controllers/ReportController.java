@@ -2,7 +2,6 @@ package br.com.floresdev.contador_comite_back.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +19,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/reports/")
-@CrossOrigin(origins = "*")
 @Tag(name = "Relatórios", description = "API para geração de relatórios financeiros")
 public class ReportController {
 
