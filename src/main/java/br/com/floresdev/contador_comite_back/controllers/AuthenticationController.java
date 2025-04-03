@@ -52,7 +52,7 @@ public class AuthenticationController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Autenticação bem-sucedida", 
                     content = @Content(schema = @Schema(implementation = UserDTO.class))),
-        @ApiResponse(responseCode = "403", description = "Credenciais inválidas", 
+        @ApiResponse(responseCode = "401", description = "Credenciais inválidas", 
                     content = @Content)
     })
     public ResponseEntity<UserDTO> login(
