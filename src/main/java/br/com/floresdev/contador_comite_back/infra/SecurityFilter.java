@@ -27,7 +27,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
         try {
-            var token = this.recoverTokenFromCookie(request);
+            var token = recoverTokenFromCookie(request);
             
             if (token != null) {
                 var email = service.validateToken(token);
@@ -46,7 +46,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
     }
 
-    private String recoverTokenFromCookie(HttpServletRequest request) {
+    public static String recoverTokenFromCookie(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null) {

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,7 +82,7 @@ public class AuthenticationController {
                     user.getUsername(), user.getId(), ipAddress);
             
             return ResponseEntity.ok(new UserDTO(user.getName(), user.getEmail(), user.getRole().toString()));
-        } catch (Exception e) {
+        } catch (AuthenticationException e) {
             logger.warn("Falha na autenticação para o email: {} de IP: {} - Motivo: {}", 
                     dto.email(), ipAddress, e.getMessage());
             throw e;
