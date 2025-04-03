@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.NoArgsConstructor;
 
 @Configuration
@@ -46,6 +47,18 @@ public class SecurityConfiguration {
                     .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                // Adicionei tratamento personalizado de exceções pra diferenciar bem o 401 do 403
+                .exceptionHandling(exceptions -> {
+                    exceptions
+                    .authenticationEntryPoint((request, response, authException) -> {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.getWriter().write("Credenciais ou token inválidos. Por favor, faça login novamente.");
+                    })
+                    .accessDeniedHandler((request, response, accessDeniedException) -> {
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        response.getWriter().write("Acesso negado. Você não possui permissões suficientes para realizar essa ação.");
+                    });
+                })
                 .build();
         } catch (Exception e) {
             System.out.println("Error in SecurityConfiguration: " + e.getMessage());
