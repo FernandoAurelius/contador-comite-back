@@ -17,8 +17,8 @@ import br.com.floresdev.contador_comite_back.domain.repositories.UserRepository;
 import br.com.floresdev.contador_comite_back.domain.user.User;
 import br.com.floresdev.contador_comite_back.domain.user.UserRole;
 import br.com.floresdev.contador_comite_back.domain.user.dto.AuthenticationDTO;
-import br.com.floresdev.contador_comite_back.domain.user.dto.UserDTO;
 import br.com.floresdev.contador_comite_back.domain.user.dto.RegisterDTO;
+import br.com.floresdev.contador_comite_back.domain.user.dto.UserDTO;
 import br.com.floresdev.contador_comite_back.infra.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -72,11 +72,12 @@ public class AuthenticationController {
             // Pra facilitar pro front-end e deixar a aplicação mais robusta: vamos usar um cookie HttpOnly
             Cookie jwtCookie = new Cookie("auth_token", token);
             jwtCookie.setHttpOnly(true);
-            jwtCookie.setSecure(false); // Temporariamente como falso, será true para apenas permitir via HTTPS
+            jwtCookie.setSecure(true);
             jwtCookie.setPath("/");
             jwtCookie.setMaxAge(3 * 60 * 60); // 3h, igual ao token
 
             response.addCookie(jwtCookie);
+            response.addHeader("Set-Cookie", "key=value; HttpOnly; SameSite=lax");
             
             logger.info("Login bem-sucedido para o usuário: {}, ID: {}, IP: {}", 
                     user.getUsername(), user.getId(), ipAddress);
