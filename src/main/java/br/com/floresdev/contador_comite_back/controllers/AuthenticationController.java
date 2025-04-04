@@ -75,9 +75,9 @@ public class AuthenticationController {
             jwtCookie.setSecure(true);
             jwtCookie.setPath("/");
             jwtCookie.setMaxAge(3 * 60 * 60); // 3h, igual ao token
+            jwtCookie.setAttribute("SameSite", "None"); // Preciso lembrar de definir essa configuração de SameSite como strict depois de fazer o deploy do front-end
 
             response.addCookie(jwtCookie);
-            response.addHeader("Set-Cookie", "key=value; HttpOnly; SameSite=lax");
             
             logger.info("Login bem-sucedido para o usuário: {}, ID: {}, IP: {}", 
                     user.getUsername(), user.getId(), ipAddress);
