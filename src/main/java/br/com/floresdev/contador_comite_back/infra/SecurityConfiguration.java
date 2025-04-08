@@ -70,7 +70,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://roughy-loved-ostrich.ngrok-free.app"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://formatura.floresdev.com.br"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
