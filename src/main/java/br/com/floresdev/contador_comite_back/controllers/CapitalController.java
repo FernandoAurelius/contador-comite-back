@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +18,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/capital")
@@ -41,15 +41,14 @@ public class CapitalController {
 
     @PutMapping("/initial")
     @Operation(summary = "Atualizar capital inicial", description = "Define um novo valor para o capital inicial")
-    @ApiResponse(responseCode = "200", description = "Capital inicial atualizado com sucesso",
-                content = @Content(schema = @Schema(implementation = CapitalDTO.class)))
+    @ApiResponse(responseCode = "200", description = "Capital inicial atualizado com sucesso")
     public ResponseEntity<CapitalDTO> updateCapitalInicial(
-        @Parameter(description = "Dados do capital com novo valor inicial") 
-        @RequestBody CapitalDTO dto
+        @Parameter(description = "Valor inicial do capital") 
+        @RequestBody BigDecimal value
     ) {
         return ResponseEntity.ok(
             CapitalDTO.fromEntity(
-                service.updateInitialCapital(dto.getInitialAmount())
+                service.updateInitialCapital(value)
             )
         );
     }
