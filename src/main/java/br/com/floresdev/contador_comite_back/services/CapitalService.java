@@ -24,13 +24,14 @@ public class CapitalService {
             return capital.get();
         }
 
-        return repository.save(new Capital(Capital.INSTANCE_ID, BigDecimal.ZERO, BigDecimal.ZERO));
+        return repository.save(new Capital(Capital.INSTANCE_ID, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
     }
 
     public Capital updateInitialCapital(BigDecimal amount) {
         Capital capital = getOrCreateCapital();
 
         capital.setInitialAmount(amount);
+        capital.setTotalAmount(capital.getTotalAmount().add(amount));
         capital = repository.save(capital);
 
         metaService.addValue(amount);
@@ -43,6 +44,7 @@ public class CapitalService {
 
         metaService.addValue(amount);
         capital.setCurrentAmount(capital.getCurrentAmount().add(amount));
+        capital.setTotalAmount(capital.getTotalAmount().add(amount));
 
         return repository.save(capital);
     }

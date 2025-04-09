@@ -14,16 +14,18 @@ public class CapitalDTO {
     private Long id;
     private BigDecimal currentAmount;
     private BigDecimal initialAmount;
+    private BigDecimal totalAmount;
 
     public Capital toEntity() {
-        return new Capital(id, currentAmount, initialAmount);
+        return new Capital(id, currentAmount, initialAmount, totalAmount);
     }
     
     public static CapitalDTO fromEntity(Capital capital) {
         return new CapitalDTO(
             capital.getId(),
             capital.getCurrentAmount(),
-            capital.getInitialAmount()
+            capital.getInitialAmount(),
+            capital.getTotalAmount()
         );
     }
 }
