@@ -25,4 +25,6 @@ public class Capital {
     private BigDecimal currentAmount;
     private BigDecimal initialAmount;
     private BigDecimal totalAmount;
+
+    private Boolean initialSetted;
 }

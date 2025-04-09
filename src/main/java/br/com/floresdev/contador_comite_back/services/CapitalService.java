@@ -24,18 +24,29 @@ public class CapitalService {
             return capital.get();
         }
 
-        return repository.save(new Capital(Capital.INSTANCE_ID, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO));
+        return repository.save(new Capital(Capital.INSTANCE_ID, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, false));
     }
 
     public Capital updateInitialCapital(BigDecimal amount) {
         Capital capital = getOrCreateCapital();
-
+        
+        // Calcular a diferença para atualizar na meta
+        BigDecimal difference = amount.subtract(capital.getInitialAmount());
+        
         capital.setInitialAmount(amount);
-        capital.setTotalAmount(capital.getTotalAmount().add(amount));
+        // Atualiza o total considerando a diferença entre o novo e o antigo valor inicial
+        capital.setTotalAmount(capital.getTotalAmount().add(difference));
+        capital.setInitialSetted(true);
         capital = repository.save(capital);
 
-        metaService.addValue(amount);
-
+        // Atualiza a meta com a diferença, não com o valor total
+        if (difference.compareTo(BigDecimal.ZERO) > 0) {
+            metaService.addValue(difference);
+        }
+        
+        if (difference.compareTo(BigDecimal.ZERO) < 0) {
+            metaService.subtractValue(difference.abs());
+        }
         return capital;
     }
 

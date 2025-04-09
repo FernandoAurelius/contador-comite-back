@@ -15,9 +15,10 @@ public class CapitalDTO {
     private BigDecimal currentAmount;
     private BigDecimal initialAmount;
     private BigDecimal totalAmount;
+    private boolean initialSetted;
 
     public Capital toEntity() {
-        return new Capital(id, currentAmount, initialAmount, totalAmount);
+        return new Capital(id, currentAmount, initialAmount, totalAmount, initialSetted);
     }
     
     public static CapitalDTO fromEntity(Capital capital) {
@@ -25,7 +26,8 @@ public class CapitalDTO {
             capital.getId(),
             capital.getCurrentAmount(),
             capital.getInitialAmount(),
-            capital.getTotalAmount()
+            capital.getTotalAmount(),
+            capital.getInitialSetted()
         );
     }
 }
