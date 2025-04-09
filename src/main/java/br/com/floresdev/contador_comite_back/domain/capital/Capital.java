@@ -24,4 +24,5 @@ public class Capital {
     // Para inserção do valor inicial do início do rastreio no app
     private BigDecimal currentAmount;
     private BigDecimal initialAmount;
+    private BigDecimal totalAmount;
 }
