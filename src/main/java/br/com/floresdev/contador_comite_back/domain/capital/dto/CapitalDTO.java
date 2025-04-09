@@ -3,8 +3,8 @@ package br.com.floresdev.contador_comite_back.domain.capital.dto;
 import java.math.BigDecimal;
 
 import br.com.floresdev.contador_comite_back.domain.capital.Capital;
-import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
