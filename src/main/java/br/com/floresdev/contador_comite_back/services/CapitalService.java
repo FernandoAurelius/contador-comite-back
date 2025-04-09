@@ -34,6 +34,7 @@ public class CapitalService {
         BigDecimal difference = amount.subtract(capital.getInitialAmount());
         
         capital.setInitialAmount(amount);
+        capital.setTotalAmount(capital.getTotalAmount().add(amount));
         capital.setInitialSetted(true);
         capital = repository.save(capital);
 
