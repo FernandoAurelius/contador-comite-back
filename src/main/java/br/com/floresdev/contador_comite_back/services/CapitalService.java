@@ -36,6 +36,7 @@ public class CapitalService {
         capital.setInitialAmount(amount);
         capital.setTotalAmount(capital.getTotalAmount().add(amount));
         capital.setInitialSetted(true);
+        capital.setCurrentAmount(amount);
         capital = repository.save(capital);
 
         // Atualiza a meta com a diferença, não com o valor total
