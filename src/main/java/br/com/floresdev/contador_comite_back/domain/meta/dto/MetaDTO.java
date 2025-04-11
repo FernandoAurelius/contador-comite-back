@@ -2,23 +2,26 @@ package br.com.floresdev.contador_comite_back.domain.meta.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import br.com.floresdev.contador_comite_back.domain.meta.Meta;
 import br.com.floresdev.contador_comite_back.domain.meta.MetaStatus;
-import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class MetaDTO {
+    private static DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     private Long id;
     private String description;
     private BigDecimal goalValue;
     private BigDecimal currentValue;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private String startDate;
+    private String endDate;
     private MetaStatus status;
 
     public Meta toEntity() {
@@ -27,8 +30,8 @@ public class MetaDTO {
             description,
             goalValue,
             currentValue,
-            startDate,
-            endDate,
+            LocalDate.parse(startDate, fmt),
+            LocalDate.parse(endDate, fmt),
             status
         );
     }
@@ -39,8 +42,8 @@ public class MetaDTO {
             meta.getDescription(),
             meta.getGoalValue(),
             meta.getCurrentValue(),
-            meta.getStartDate(),
-            meta.getEndDate(),
+            meta.getStartDate().format(fmt),
+            meta.getEndDate().format(fmt),
             meta.getStatus()
         );
     }

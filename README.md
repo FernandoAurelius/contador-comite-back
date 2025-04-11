@@ -18,21 +18,21 @@ Desenvolvido com tecnologias modernas, o sistema oferece uma interface amigável
 ✅ Acompanhamento do progresso em direção às metas  
 ✅ Monitoramento de status das metas (em andamento, concluída, etc.)
 
-## Funcionalidades Planejadas
-
 ### Registro de Vendas
-🔄 Contadores para diferentes produtos (refri copo, refri garrafa, picolé)  
-🔄 Marcação de "dia de trote" com contadores especiais (bingo, cadeia do amor, correio elegante)  
-🔄 Registro de vendas customizadas e exceções
+✅ Contadores para diferentes produtos (refri copo, refri garrafa, picolé)  
+✅ Marcação de "dia de trote" com contadores especiais (bingo, cadeia do amor, correio elegante)  
+✅ Registro de vendas customizadas e exceções  
+✅ Carregamento de vendas existentes por data
 
 ### Registro de Despesas
-🔄 Cadastro de despesas com insumos (picolés, fardos de refrigerante)  
-🔄 Controle de despesas diversas
+✅ Cadastro de despesas com insumos (picolés, fardos de refrigerante)  
+✅ Controle de despesas diversas
 
 ### Visualização e Análise
-🔄 Calendário semanal até a data final de pagamento da formatura  
-🔄 Gráficos de receitas e lucros por dia  
-🔄 Sumário financeiro e acompanhamento de metas
+✅ Calendário semanal até a data final de pagamento da formatura  
+✅ Gráficos de receitas e lucros por dia  
+✅ Sumário financeiro e acompanhamento de metas  
+✅ Relatórios financeiros por período
 
 ## Arquitetura do Sistema
 
@@ -41,340 +41,29 @@ Desenvolvido com tecnologias modernas, o sistema oferece uma interface amigável
 - Banco de dados PostgreSQL
 - Armazenamento em AWS RDS
 
-### Frontend (Planejado)
-- Vue.js com TypeScript
-- Vuex para gerenciamento de estado
+### Frontend (Implementado)
+- Vue.js 3 com TypeScript
+- Pinia para gerenciamento de estado
 - Interface responsiva e intuitiva
+- Gráficos e visualizações interativas
 
-## Modelo de Domínio
-### Diagrama de Classes Atual
-```mermaid
-classDiagram
-    %% Domain - Entidades do Domínio
-    class Capital {
-        -Long id
-        -BigDecimal initialAmount
-        -BigDecimal currentAmount
-        -LocalDateTime createdAt
-        -LocalDateTime updatedAt
-        +INSTANCE_ID : Long
-    }
-    
-    class Meta {
-        -Long id
-        -String description
-        -BigDecimal goalValue
-        -BigDecimal currentValue
-        -LocalDate startDate
-        -LocalDate endDate
-        -MetaStatus status
-        +INSTANCE_ID : Long
-    }
-    
-    class Venda {
-        -Long id
-        -LocalDate date
-        -ItemType itemType
-        -Integer quantity
-        -BigDecimal unitPrice
-        -BigDecimal totalPrice
-        -String notes
-    }
-    
-    class Despesa {
-        -Long id
-        -LocalDate date
-        -String item
-        -Integer quantity
-        -BigDecimal unitCost
-        -BigDecimal totalCost
-        -String notes
-    }
-    
-    class ItemType {
-        <<enumeration>>
-        REFRIGERANTE_COPO
-        REFRIGERANTE_GARRAFA
-        PICOLE
-        OUTRO
-    }
-    
-    class MetaStatus {
-        <<enumeration>>
-        ATIVA
-        CONCLUIDA
-        CANCELADA
-    }
-    
-    class User {
-        -Long id
-        -String name
-        -String email
-        -String password
-        -UserRole role
-    }
-    
-    class UserRole {
-        <<enumeration>>
-        ADMIN
-        USER
-    }
-    
-    %% DTOs - Objetos de Transferência de Dados
-    class CapitalDTO {
-        -Long id
-        -BigDecimal currentAmount
-        -BigDecimal initialAmount
-        +toEntity() Capital
-        +fromEntity(Capital) CapitalDTO
-    }
-    
-    class MetaDTO {
-        -Long id
-        -String description
-        -BigDecimal goalValue
-        -BigDecimal currentValue
-        -LocalDate startDate
-        -LocalDate endDate
-        -MetaStatus status
-        +toEntity() Meta
-        +fromEntity(Meta) MetaDTO
-    }
-    
-    class VendaDTO {
-        -Long id
-        -String date
-        -ItemType itemType
-        -Integer quantity
-        -BigDecimal unitPrice
-        -BigDecimal totalPrice
-        -String notes
-        -Boolean isHazing
-        +toEntity() Venda
-        +fromEntity(Venda) VendaDTO
-    }
-    
-    class DespesaDTO {
-        -Long id
-        -LocalDate date
-        -String item
-        -Integer quantity
-        -BigDecimal unitCost
-        -BigDecimal totalCost
-        -String notes
-        +toEntity() Despesa
-        +fromEntity(Despesa) DespesaDTO
-    }
-    
-    %% Auth DTOs
-    class AuthenticationDTO {
-        -String email
-        -String password
-    }
-    
-    class LoginResponseDTO {
-        -String token
-    }
-    
-    class RegisterDTO {
-        -String name
-        -String email
-        -String password
-        -String role
-    }
-    
-    %% Services
-    class CapitalService {
-        -CapitalRepository repository
-        -MetaService metaService
-        +getOrCreateCapital() Capital
-        +updateInitialCapital(BigDecimal) Capital
-        +addValue(BigDecimal) Capital
-        +subtractValue(BigDecimal) Capital
-    }
-    
-    class MetaService {
-        -MetaRepository repository
-        +getOrCreateMeta() Meta
-        +updateMeta(Meta) Meta
-        +addValue(BigDecimal) Meta
-        +subtractValue(BigDecimal) Meta
-    }
-    
-    class VendaService {
-        -VendaRepository repository
-        -CapitalService capitalService
-        +createOrUpdateVenda(Venda) Venda
-        +getVendas() List~Venda~
-        +getVendasByDate(LocalDate) List~Venda~
-        +deleteVenda(Long) void
-    }
-    
-    class DespesaService {
-        -DespesaRepository repository
-        -CapitalService capitalService
-        +createOrUpdateDespesa(Despesa) Despesa
-        +getDespesas() List~Despesa~
-        +getDespesasByDate(LocalDate) Optional~List~Despesa~~
-        +deleteDespesa(Long) void
-    }
-    
-    %% Controllers
-    class CapitalController {
-        -CapitalService service
-        +getCapital() ResponseEntity~CapitalDTO~
-        +updateCapitalInicial(CapitalDTO) ResponseEntity~CapitalDTO~
-        +addCapital(BigDecimal) ResponseEntity~CapitalDTO~
-        +subtractCapital(BigDecimal) ResponseEntity~CapitalDTO~
-    }
-    
-    class MetaController {
-        -MetaService service
-        +getMeta() ResponseEntity~MetaDTO~
-    }
-    
-    class VendaController {
-        -VendaService service
-        +createVenda(VendaDTO) ResponseEntity~VendaDTO~
-        +getVendas() ResponseEntity~List~VendaDTO~~
-        +getVendasByDate(LocalDate) ResponseEntity~List~VendaDTO~~
-        +updateVenda(Long, VendaDTO) ResponseEntity~VendaDTO~
-        +deleteVenda(Long) ResponseEntity~Void~
-    }
-    
-    class DespesaController {
-        -DespesaService service
-        +createDespesa(DespesaDTO) ResponseEntity~DespesaDTO~
-        +getDespesas() ResponseEntity~List~DespesaDTO~~
-        +getDespesasByDate(LocalDate) ResponseEntity~List~DespesaDTO~~
-        +updateDespesa(Long, DespesaDTO) ResponseEntity~DespesaDTO~
-        +deleteDespesa(Long) ResponseEntity~Void~
-    }
-    
-    class AuthenticationController {
-        -UserRepository repository
-        -AuthenticationManager authManager
-        -TokenService service
-        +login(AuthenticationDTO) ResponseEntity~LoginResponseDTO~
-        +register(RegisterDTO) ResponseEntity~Void~
-    }
-    
-    %% Relações
-    Venda --> ItemType
-    Meta --> MetaStatus
-    User --> UserRole
-    
-    Capital ..> CapitalDTO : converte para
-    Meta ..> MetaDTO : converte para
-    Venda ..> VendaDTO : converte para
-    Despesa ..> DespesaDTO : converte para
-    
-    CapitalService --> Capital : manipula
-    MetaService --> Meta : manipula
-    VendaService --> Venda : manipula
-    DespesaService --> Despesa : manipula
-    
-    CapitalController --> CapitalService : usa
-    MetaController --> MetaService : usa
-    VendaController --> VendaService : usa
-    DespesaController --> DespesaService : usa
-    
-    VendaService --> CapitalService : usa
-    DespesaService --> CapitalService : usa
-    CapitalService --> MetaService : usa
-    
-    AuthenticationController --> User : manipula
-```
+## Boas Práticas Implementadas
 
-### Diagrama da Arquitetura do Sistema
-```mermaid
-flowchart TB
-    %% Cada 'subgraph' representa uma camada.
+1. **Tratamento adequado de IDs**: Remoção de IDs nos objetos ao criar novas entidades, preservando-os apenas para atualizações.
+2. **Responsividade**: Adaptação dos componentes para diferentes tamanhos de tela.
+3. **Validação de formulários**: Verificação dos dados antes de envio à API.
+4. **Feedback ao usuário**: Notificações de sucesso e erro para todas as operações.
+5. **Centralização de lógica**: Uso de stores para centralizar a lógica de negócios.
+6. **Reutilização de componentes**: Componentes modulares que podem ser reutilizados em diferentes partes da aplicação.
+7. **Tipagem estrita**: Uso de TypeScript para garantir integridade dos dados.
 
-    subgraph Apresentacao
-        CapitalController
-        MetaController
-        VendaController
-        DespesaController
-        AuthenticationController
-    end
+## Problemas Conhecidos e Soluções
 
-    subgraph Aplicacao
-        CapitalService
-        MetaService
-        VendaService
-        DespesaService
-        TokenService
-    end
+1. **Overflow de gráficos**: Corrigido através da implementação de estilos CSS específicos para controlar o dimensionamento e overflow dos gráficos.
 
-    subgraph Dominio
-        Capital
-        Meta
-        Venda
-        Despesa
-        User
-        ItemType
-        MetaStatus
-        UserRole
-    end
+2. **Sincronização de dados**: Implementado sistema para carregar vendas existentes por data, permitindo a edição de dados já cadastrados.
 
-    subgraph Infraestrutura
-        CapitalRepository
-        MetaRepository
-        VendaRepository
-        DespesaRepository
-        UserRepository
-    end
-
-    subgraph DTOs
-        CapitalDTO
-        MetaDTO
-        VendaDTO
-        DespesaDTO
-        AuthenticationDTO
-        LoginResponseDTO
-        RegisterDTO
-    end
-
-    %% Relações entre camadas
-    CapitalController --> CapitalService
-    MetaController --> MetaService
-    VendaController --> VendaService
-    DespesaController --> DespesaService
-    AuthenticationController --> TokenService
-
-    CapitalService --> CapitalRepository
-    MetaService --> MetaRepository
-    VendaService --> VendaRepository
-    DespesaService --> DespesaRepository
-    TokenService --> UserRepository
-
-    CapitalService --> Capital
-    MetaService --> Meta
-    VendaService --> Venda
-    DespesaService --> Despesa
-    TokenService --> User
-
-    Capital --> CapitalDTO
-    Meta --> MetaDTO
-    Venda --> VendaDTO
-    Despesa --> DespesaDTO
-    User --> AuthenticationDTO
-```
-
-### Fluxo de Dados do Sistema
-```mermaid
-flowchart TB
-    Cliente[Cliente Frontend] --> Controllers
-    subgraph Backend
-        Controllers --> DTOs
-        DTOs --> Services
-        Services --> Entities[Entidades de Domínio]
-        Services --> Repositories
-        Repositories --> Database[(Database PostgreSQL)]
-    end
-    Controllers --> Cliente
-```
+3. **Manipulação de IDs**: Separação clara entre criação (sem ID) e atualização (com ID) para evitar conflitos no backend.
 
 ## API Endpoints Implementados
 
@@ -945,11 +634,9 @@ POST /api/auth/register
 3. Execute o backend com `mvn spring-boot:run`
 
 ## Próximos Passos
-- Implementação de módulos de venda e despesa
-- Desenvolvimento do frontend em Vue.js
-- Implementação de autenticação e autorização
-- Desenvolvimento de dashboards analíticos
-- Implementação de relatórios exportáveis
+- Implementação de funcionalidades avançadas de análise
+- Melhorias na autenticação e autorização
+- Exportação de relatórios em PDF
 
 ## Sobre o Projeto
 
