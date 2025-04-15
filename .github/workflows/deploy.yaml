@@ -41,7 +41,6 @@ jobs:
       - name: Run tests
         run: mvn test
         env:
-          # Usando o nome do serviço como hostname
           SPRING_PROFILES_ACTIVE: test
         
       - name: Build Docker image
@@ -58,23 +57,27 @@ jobs:
           docker tag contador-receita-back ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
 
-  deploy:
+  deploy-oracle:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-    - name: Deploy to EC2
+    - name: Deploy to Oracle Cloud VPS
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USERNAME }}
-        key: ${{ secrets.EC2_PRIVATE_KEY }}
+        host: ${{ secrets.ORACLE_VPS_HOST }}
+        username: ${{ secrets.ORACLE_VPS_USERNAME }}
+        key: ${{ secrets.ORACLE_VPS_PRIVATE_KEY }}
+        port: ${{ secrets.ORACLE_VPS_SSH_PORT }}
         script: |
+          # Parar e remover o container existente, caso exista
           sudo docker stop contador-app || true
           sudo docker rm contador-app || true
           
+          # Forçar o download da imagem mais recente
           sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
           
+          # Executar o novo container com as configurações de ambiente adequadas
           sudo docker run -d --name contador-app \
             -p 8080:8080 \
             -e SPRING_PROFILES_ACTIVE=prod \
@@ -86,10 +89,13 @@ jobs:
             --restart unless-stopped \
             ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
           
+          # Verificar se o container está rodando
           sleep 10
           sudo docker ps
           
+          # Verificar logs se o container não estiver rodando
           if ! sudo docker ps | grep contador-app; then
             echo "Container falhou ao iniciar. Verificando logs:"
             sudo docker logs contador-app
+            exit 1
           fi
