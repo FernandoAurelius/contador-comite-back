@@ -89,6 +89,8 @@ jobs:
             -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -e API_SECURITY_TOKEN_SECRET="${{ secrets.API_SECURITY_TOKEN }}" \
             -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
+            -e SPRING_DATASOURCE_HIKARI_KEEPALIVE_TIME=60000 \
+            -e SPRING_DATASOURCE_HIKARI_MAX_LIFETIME=900000 \
             --restart unless-stopped \
             ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
           
