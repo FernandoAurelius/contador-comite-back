@@ -82,7 +82,7 @@ jobs:
           
           # Executar o novo container com as configurações de ambiente adequadas
           sudo docker run -d --name contador-app \
-            -p 8080:8080 \
+            --network host \
             -e SPRING_PROFILES_ACTIVE=prod \
             -e SPRING_DATASOURCE_URL=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }} \
             -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
