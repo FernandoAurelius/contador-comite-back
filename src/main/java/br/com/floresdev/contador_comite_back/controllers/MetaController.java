@@ -1,4 +1,4 @@
-package br.com.floresdev.contador_comite_back.controllers;
+apackage br.com.floresdev.contador_comite_back.controllers;
 
 import java.math.BigDecimal;
 
