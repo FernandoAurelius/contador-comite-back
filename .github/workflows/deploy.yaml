@@ -65,42 +65,20 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-    - name: Deploy to Oracle Cloud VPS
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.ORACLE_VPS_HOST }}
-        username: ${{ secrets.ORACLE_VPS_USERNAME }}
-        key: ${{ secrets.ORACLE_VPS_PRIVATE_KEY }}
-        port: ${{ secrets.ORACLE_VPS_SSH_PORT }}
-        script: |
-          # Parar e remover o container existente, caso exista
-          sudo docker stop contador-app || true
-          sudo docker rm contador-app || true
-          
-          # Forçar o download da imagem mais recente
-          sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
-          
-          # Executar o novo container com as configurações de ambiente adequadas
-          sudo docker run -d --name contador-app \
-            --network host \
-            -e SPRING_PROFILES_ACTIVE=prod \
-            -e SPRING_DATASOURCE_URL=jdbc:postgresql://${{ secrets.DB_HOST }}:5432/${{ secrets.DB_NAME }} \
-            -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
-            -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e API_SECURITY_TOKEN_SECRET="${{ secrets.API_SECURITY_TOKEN }}" \
-            -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
-            -e SPRING_DATASOURCE_HIKARI_KEEPALIVE_TIME=60000 \
-            -e SPRING_DATASOURCE_HIKARI_MAX_LIFETIME=900000 \
-            --restart unless-stopped \
-            ${{ secrets.DOCKERHUB_USERNAME }}/contador-receita-back:latest
-          
-          # Verificar se o container está rodando
-          sleep 15
-          sudo docker ps
-          
-          # Verificar logs se o container não estiver rodando
-          if ! sudo docker ps | grep contador-app; then
-            echo "Container falhou ao iniciar. Verificando logs:"
-            sudo docker logs contador-app
-            exit 1
-          fi
+      - name: Deploy to Oracle Cloud VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ORACLE_VPS_HOST }}
+          username: ${{ secrets.ORACLE_VPS_USERNAME }}
+          key: ${{ secrets.ORACLE_VPS_PRIVATE_KEY }}
+          port: ${{ secrets.ORACLE_VPS_SSH_PORT }}
+          script: |
+            PROJECT_DIR=contador-receita
+            rm -rf $PROJECT_DIR
+            git clone https://github.com/FernandoAurelius/contador-comite-back.git $PROJECT_DIR
+            cd $PROJECT_DIR
+            cp .env.prod .env || true
+            docker compose down || true
+            docker compose pull
+            docker compose up -d
+            docker ps
