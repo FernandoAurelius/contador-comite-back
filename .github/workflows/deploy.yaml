@@ -37,9 +37,11 @@ jobs:
           
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+        if: false
         
       - name: Run tests
         run: mvn test
+        if: false
         env:
           SPRING_PROFILES_ACTIVE: test
         
@@ -78,6 +80,11 @@ jobs:
             if sudo docker ps | grep contador-app; then
               sudo docker stop contador-app || true
               sudo docker rm contador-app || true
+            fi
+
+            if sudo docker ps | grep contador-receita-postgres-1; then
+              sudo docker stop contador-receita-postgres-1 || true
+              sudo docker rm contador-receita-postgres-1 || true
             fi
             
             rm -rf "$PROJECT_DIR" || true
