@@ -73,22 +73,23 @@ jobs:
           key: ${{ secrets.ORACLE_VPS_PRIVATE_KEY }}
           port: ${{ secrets.ORACLE_VPS_SSH_PORT }}
           script: |
-            PROJECT_DIR="contador-receita"
-
-            cd ~
-
-            rm -rf "$PROJECT_DIR"
-
+            PROJECT_DIR="/home/${{ secrets.ORACLE_VPS_USERNAME }}/contador-comite-back"
+            
+            if sudo docker ps | grep contador-app; then
+              sudo docker stop contador-app || true
+              sudo docker rm contador-app || true
+            fi
+            
+            rm -rf "$PROJECT_DIR" || true
+            
             git clone https://github.com/FernandoAurelius/contador-comite-back.git "$PROJECT_DIR"
-
-            cp .env "$PROJECT_DIR/.env"
-
+            
+            cp ~/.env "$PROJECT_DIR/.env"
+            
             cd "$PROJECT_DIR"
-
+            
             sudo docker compose down || true
             sudo docker compose pull
             sudo docker compose up -d --force-recreate --remove-orphans
-
-            sudo docker ps
-
+            
             sudo docker ps
