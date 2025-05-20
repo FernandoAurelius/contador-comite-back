@@ -73,12 +73,15 @@ jobs:
           key: ${{ secrets.ORACLE_VPS_PRIVATE_KEY }}
           port: ${{ secrets.ORACLE_VPS_SSH_PORT }}
           script: |
-            PROJECT_DIR=contador-receita
             rm -rf $PROJECT_DIR
             git clone https://github.com/FernandoAurelius/contador-comite-back.git $PROJECT_DIR
+
+            cp ~/.env $PROJECT_DIR/.env
+
             cd $PROJECT_DIR
-            cp .env.prod .env || true
-            docker compose down || true
-            docker compose pull
-            docker compose up -d
-            docker ps
+
+            sudo docker compose down || true
+            sudo docker compose pull
+            sudo docker compose up -d
+
+            sudo docker ps
